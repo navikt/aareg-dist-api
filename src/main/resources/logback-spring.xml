@@ -29,17 +29,6 @@
             </filter>
         </appender>
 
-        <root level="INFO">
-            <appender-ref ref="default-json" />
-            <appender-ref ref="team-logs" />
-        </root>
-
-        <logger name="team-logs-logger" level="INFO" additivity="false">
-            <appender-ref ref="team-logs" />
-        </logger>
-    </springProfile>
-
-    <springProfile name="log-logstash">
         <appender name="auditLog" class="com.papertrailapp.logback.Syslog4jAppender">
             <layout class="ch.qos.logback.classic.PatternLayout">
                 <pattern>%m%n%xEx</pattern>
@@ -61,41 +50,13 @@
             <appender-ref ref="auditLog"/>
         </logger>
 
-        <appender name="stdout_json" class="ch.qos.logback.core.ConsoleAppender">
-            <encoder class="net.logstash.logback.encoder.LogstashEncoder"/>
-        </appender>
-
-        <root level="WARN">
-            <appender-ref ref="stdout_json"/>
-        </root>
-
-        <logger name="no.nav.aareg" level="INFO" additivity="false">
-            <appender-ref ref="stdout_json"/>
-        </logger>
-
-        <!-- "Overrides" for logging -->
-        <logger name="org.springframework" level="INFO"/>
-        <logger name="no.nav.aareg.services.consumer.kodeverk.KodeverkService" level="WARN"/>
-    </springProfile>
-
-    <springProfile name="log-console">
-        <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
-            <encoder>
-                <pattern>%date [%-5level] %logger{1} -- %message%n</pattern>
-            </encoder>
-        </appender>
-
         <root level="INFO">
-            <appender-ref ref="STDOUT"/>
+            <appender-ref ref="default-json" />
+            <appender-ref ref="team-logs" />
         </root>
 
-        <logger name="secureLogger" level="INFO" additivity="false">
-            <appender-ref ref="STDOUT"/>
-        </logger>
-
-        <logger name="auditLogger" level="INFO" additivity="false">
-            <appender-ref ref="STDOUT"/>
+        <logger name="team-logs-logger" level="INFO" additivity="false">
+            <appender-ref ref="team-logs" />
         </logger>
     </springProfile>
-
 </configuration>
