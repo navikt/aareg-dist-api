@@ -14,7 +14,7 @@ spec:
           cluster: dev-gcp
 
     outbound:
-      rule:
+      rules:
         - application: logging
           namespace: nais-system
       external:
