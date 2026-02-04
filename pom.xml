@@ -20,7 +20,7 @@
 
         <!-- dist-libs/common -->
         <logback-syslog4j.version>1.0.0</logback-syslog4j.version>
-        <logstash-logback-encoder.version>7.3</logstash-logback-encoder.version>
+        <logstash-logback-encoder.version>9.0</logstash-logback-encoder.version>
         <commons-collections4.version>4.4</commons-collections4.version>
 
         <!-- dist-libs/graphql -->
