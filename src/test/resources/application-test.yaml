@@ -1,0 +1,28 @@
+AZURE_APP_CLIENT_ID: DUMMY
+AZURE_APP_CLIENT_SECRET: TestSecret
+
+nais.token.exchange.endpoint: http://localhost:${wiremock.server.port}/texas/exchange
+nais.token.endpoint: http://localhost:${wiremock.server.port}/texas/token
+
+app:
+  security:
+    oidc:
+      idp:
+        maskinporten:
+          issuerUrl: http://localhost:${wiremock.server.port}/maskinporten
+          jwkSetUri: http://localhost:${wiremock.server.port}/maskinporten/jwks
+  name: aareg-dist-api
+
+  url:
+    aareg:
+      tilgangskontroll: http://localhost:${wiremock.server.port}/aareg-tilgangskontroll
+      dist.mottak: http://localhost:${wiremock.server.port}/aareg-dist-mottak
+
+  scope:
+    aareg.tilgangskontroll: "api://test/.default"
+    aareg.dist.mottak: "api://test/.default"
+
+spring:
+  main:
+    banner-mode: 'off'
+    allow-bean-definition-overriding: true

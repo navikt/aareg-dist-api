@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <springProperty name="app.name" source="app.name"/>
+
+    <springProfile name="team-logs">
+        <appender name="team-logs" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
+            <destination>team-logs.nais-system:5170</destination>
+            <encoder class="net.logstash.logback.encoder.LogstashEncoder">
+                <customFields>{"google_cloud_project":"${GOOGLE_CLOUD_PROJECT}","nais_namespace_name":"${NAIS_NAMESPACE}","nais_pod_name":"${NAIS_POD_NAME}","nais_container_name":"${NAIS_APP_NAME}"}</customFields>
+                <includeContext>false</includeContext>
+            </encoder>
+            <filter class="ch.qos.logback.core.filter.EvaluatorFilter">
+                <evaluator class="ch.qos.logback.classic.boolex.OnMarkerEvaluator">
+                    <marker>TEAM_LOGS</marker>
+                </evaluator>
+                <OnMatch>ACCEPT</OnMatch>
+                <OnMismatch>DENY</OnMismatch>
+            </filter>
+        </appender>
+
+        <appender name="default-json" class="ch.qos.logback.core.ConsoleAppender">
+            <encoder class="net.logstash.logback.encoder.LogstashEncoder" />
+            <filter class="ch.qos.logback.core.filter.EvaluatorFilter">
+                <evaluator class="ch.qos.logback.classic.boolex.OnMarkerEvaluator">
+                    <marker>TEAM_LOGS</marker>
+                </evaluator>
+                <OnMatch>DENY</OnMatch>
+                <OnMismatch>ACCEPT</OnMismatch>
+            </filter>
+        </appender>
+
+        <root level="INFO">
+            <appender-ref ref="default-json" />
+            <appender-ref ref="team-logs" />
+        </root>
+
+        <logger name="team-logs-logger" level="INFO" additivity="false">
+            <appender-ref ref="team-logs" />
+        </logger>
+    </springProfile>
+
+    <springProfile name="log-logstash">
+        <appender name="auditLog" class="com.papertrailapp.logback.Syslog4jAppender">
+            <layout class="ch.qos.logback.classic.PatternLayout">
+                <pattern>%m%n%xEx</pattern>
+            </layout>
+
+            <syslogConfig class="org.productivity.java.syslog4j.impl.net.tcp.TCPNetSyslogConfig">
+                <!-- remote system to log to -->
+                <host>audit.nais</host>
+                <!-- remote port to log to -->
+                <port>6514</port>
+                <!-- application -->
+                <ident>${app.name}</ident>
+                <!-- max log message length in bytes -->
+                <maxMessageLength>128000</maxMessageLength>
+            </syslogConfig>
+        </appender>
+
+        <logger name="auditLogger" level="INFO" additivity="false">
+            <appender-ref ref="auditLog"/>
+        </logger>
+
+        <appender name="stdout_json" class="ch.qos.logback.core.ConsoleAppender">
+            <encoder class="net.logstash.logback.encoder.LogstashEncoder"/>
+        </appender>
+
+        <root level="WARN">
+            <appender-ref ref="stdout_json"/>
+        </root>
+
+        <logger name="no.nav.aareg" level="INFO" additivity="false">
+            <appender-ref ref="stdout_json"/>
+        </logger>
+
+        <!-- "Overrides" for logging -->
+        <logger name="org.springframework" level="INFO"/>
+        <logger name="no.nav.aareg.services.consumer.kodeverk.KodeverkService" level="WARN"/>
+    </springProfile>
+
+    <springProfile name="log-console">
+        <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+            <encoder>
+                <pattern>%date [%-5level] %logger{1} -- %message%n</pattern>
+            </encoder>
+        </appender>
+
+        <root level="INFO">
+            <appender-ref ref="STDOUT"/>
+        </root>
+
+        <logger name="secureLogger" level="INFO" additivity="false">
+            <appender-ref ref="STDOUT"/>
+        </logger>
+
+        <logger name="auditLogger" level="INFO" additivity="false">
+            <appender-ref ref="STDOUT"/>
+        </logger>
+    </springProfile>
+
+</configuration>

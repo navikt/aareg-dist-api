@@ -1,0 +1,88 @@
+name: Build, push, and deploy
+
+on:
+  push:
+    branches:
+      - "main"
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: "Hvilket environment skal deployes?"
+        required: true
+        default: q2
+        type: choice
+        options:
+          - p
+          - dev
+          - q0
+          - q1
+          - q2
+          - q4
+          - q5
+
+jobs:
+  build_and_push:
+    name: Build and push Docker image
+    permissions:
+      contents: read
+      id-token: write
+    outputs:
+      docker_image: ${{ steps.docker-push.outputs.image }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Configure JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+          cache: 'maven'
+      - name: Build
+        env:
+          GITHUB_ACTOR: ${{ github.actor }}
+          ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+        run: mvn clean package --also-make --threads=2 --batch-mode --settings maven-settings.xml
+      - uses: nais/docker-build-push@v0
+        id: docker-push
+        with:
+          team: arbeidsforhold
+          image_suffix: aareg-dist-api
+          project_id: ${{ vars.NAIS_MANAGEMENT_PROJECT_ID }}
+          identity_provider: ${{ secrets.NAIS_WORKLOAD_IDENTITY_PROVIDER }}
+          build_args: |
+            JAR_PATH=target/app.jar
+
+  deploy-prod:
+    name: Deploy to NAIS prod-gcp
+    needs: build_and_push
+    if: github.event.inputs.environment == 'p'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: nais/deploy/actions/deploy@v2
+        env:
+          CLUSTER: prod-gcp
+          RESOURCE: .nais/prod.yaml
+          ENVIRONMENT: prod-gcp:arbeidsforhold:aareg-dist-api
+          IMAGE: ${{ needs.build_and_push.outputs.docker_image }}
+
+  deploy-dev:
+    name: Deploy to NAIS dev-gcp (Q2)
+    needs: build_and_push
+    if: github.event.inputs.environment == 'dev' || github.event.inputs.environment == 'q2'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: nais/deploy/actions/deploy@v2
+        env:
+          CLUSTER: dev-gcp
+          RESOURCE: .nais/q2.yaml
+          ENVIRONMENT: dev-gcp:arbeidsforhold:aareg-dist-api-q2
+          IMAGE: ${{ needs.build_and_push.outputs.docker_image }}

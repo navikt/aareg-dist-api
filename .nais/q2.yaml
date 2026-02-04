@@ -1,0 +1,205 @@
+apiVersion: nais.io/v1alpha1
+kind: Application
+metadata:
+  name: aareg-dist-api-q2
+  namespace: arbeidsforhold
+  labels:
+    team: arbeidsforhold
+spec:
+  accessPolicy:
+    inbound:
+      rules:
+        - application: aareg-status
+          namespace: arbeidsforhold
+          cluster: dev-gcp
+
+    outbound:
+      external:
+        - host: aareg-dist-mottak.dev-fss-pub.nais.io
+
+  env:
+    - name: STACK
+      value: preprod
+
+    - name: APP_NAME
+      value: aareg-dist-api-q2
+
+    - name: JAVA_OPTS
+      value: "-XX:MinRAMPercentage=25.0 -XX:MaxRAMPercentage=75.0 -XX:+HeapDumpOnOutOfMemoryError"
+
+    - name: SPRING_PROFILES_ACTIVE
+      value: log-logstash,k8s,team-logs
+
+    - name: APP_SECURITY_OIDC_IDP_MASKINPORTEN_ISSUERURL
+      value: https://test.maskinporten.no/
+    - name: APP_SECURITY_OIDC_IDP_MASKINPORTEN_JWKSETURI
+      value: https://test.maskinporten.no/jwks
+
+    - name: APP_SECURITY_OIDC_IDP_AZUREAD_ISSUERURL
+      value: https://login.microsoftonline.com/966ac572-f5b7-4bbe-aa88-c76419c0f851/v2.0
+    - name: APP_SECURITY_OIDC_IDP_AZUREAD_JWKSETURI
+      value: https://login.microsoftonline.com/966ac572-f5b7-4bbe-aa88-c76419c0f851/discovery/v2.0/keys
+
+    - name: APP_URL_AAREG_TILGANGSKONTROLL
+      value: https://aareg-tilgangskontroll.intern.dev.nav.no
+    - name: APP_SCOPE_AAREG_TILGANGSKONTROLL
+      value: api://dev-gcp.arbeidsforhold.aareg-tilgangskontroll-q2/.default
+
+    - name: APP_URL_ENTRA_TOKEN_ENDPOINT
+      value: https://login.microsoftonline.com/966ac572-f5b7-4bbe-aa88-c76419c0f851/oauth2/v2.0/token
+
+    - name: APP_URL_AAREG_DIST_MOTTAK
+      value: https://aareg-dist-mottak.dev-fss-pub.nais.io/api
+    - name: APP_SCOPE_AAREG_DIST_MOTTAK
+      value: api://dev-fss.arbeidsforhold.aareg-dist-mottak/.default
+
+  image: {{image}}
+  port: 8080
+  ingresses:
+    - https://aareg-dist-api.ekstern.dev.nav.no
+  replicas:
+    min: 1
+    max: 1
+    cpuThresholdPercentage: 50
+  liveness:
+    path: /internal/isAlive
+    initialDelay: 20
+    periodSeconds: 2
+    failureThreshold: 30
+  readiness:
+    path: /internal/isReady
+    initialDelay: 20
+    periodSeconds: 2
+    failureThreshold: 30
+  preStopHookPath: /internal/shutdown
+  resources:
+    requests:
+      cpu: 25m
+      memory: 1024Mi
+    limits:
+      memory: 3Gi
+  prometheus:
+    enabled: true
+    path: actuator/prometheus
+  maskinporten:
+    enabled: true
+    scopes:
+      consumes:
+        - name: nav:aareg/v1/arbeidsforhold
+      exposes:
+        - name: v1/arbeidsforhold
+          enabled: true
+          product: aareg
+          atMaxAge: 180
+          delegationSource: altinn
+          separator: "/"
+          consumers:
+            - name: NAV
+              orgno: "889640782"
+            - name: Barekstad (test-organisasjon)
+              orgno: "810514442"
+            - name: Fellesordningen for Avtalefestet Pensjon
+              orgno: "987414502"
+            - name: POLITI- OG LENSMANNSETATEN
+              orgno: "915429785"
+            - name: STATENS LÅNEKASSE FOR UTDANNING
+              orgno: "960885406"
+            - name: SELJORD KOMMUNE
+              orgno: "964963738"
+            - name: ETNEDAL KOMMUNE
+              orgno: "933038173"
+            - name: HELSEDIREKTORATET
+              orgno: "983544622"
+            - name: UTLENDINGSDIREKTORATET
+              orgno: "974760746"
+            - name: HUSBANKEN
+              orgno: "942114184"
+            - name: DOMSTOLENE I NORGE
+              orgno: "984195796"
+            - name: SANDNES KOMMUNE
+              orgno: "964965137"
+            - name: AVINOR AS
+              orgno: "985198292"
+            - name: TOLLETATEN
+              orgno: "974761343"
+            - name: ARBEIDSTILSYNET
+              orgno: "974761211"
+            - name: ENEBAKK KOMMUNE
+              orgno: "964949581"
+            - name: STATENS ARBEIDSMILJØINSTITUTT
+              orgno: "874761222"
+            - name: FINANSTILSYNET
+              orgno: "840747972"
+            - name: MESTERBREVNEMNDA
+              orgno: "982786495"
+            - name: ARENDAL KOMMUNE
+              orgno: "940493021"
+            - name: SORTLAND KOMMUNE
+              orgno: "847737492"
+            - name: SKATTEETATEN
+              orgno: "974761076"
+            - name: INDRE ØSTFOLD KOMMUNE
+              orgno: "920123899"
+            - name: HEIM KOMMUNE
+              orgno: "920920004"
+            - name: BANE NOR SF
+              orgno: "917082308"
+            - name: BODØ KOMMUNE
+              orgno: "972418013"
+            - name: SARPSBORG KOMMUNE
+              orgno: "938801363"
+            - name: KVINNHERAD KOMMUNE
+              orgno: "964967636"
+            - name: KRIMINALOMSORGSDIREKTORATET
+              orgno: "911830868"
+            - name: STATENS HELSETILSYN
+              orgno: "974761394"
+            - name: RENNEBU KOMMUNE
+              orgno: "940083672"
+            - name: OSLO KOMMUNE INNKREVINGSETATEN
+              orgno: "976819934"
+            - name: FISKERIDIREKTORATET
+              orgno: "971203420"
+            - name: RIKSADVOKATEN
+              orgno: "971524758"
+            - name: SENJA KOMMUNE
+              orgno: "921369417"
+            - name: NORDKAPP KOMMUNE
+              orgno: "938469415"
+            - name: MALVIK KOMMUNE
+              orgno: "971035560"
+            - name: FORSVARET
+              orgno: "986105174"
+            - name: STATSFORVALTEREN I NORDLAND
+              orgno: "974764687"
+            - name: TELEMARK NETT AS
+              orgno: "925803375"
+            - name: STATENS VEGVESEN
+              orgno: "971032081"
+            - name: DIGITALISERINGSDIREKTORATET
+              orgno: "991825827"
+            - name: OSLO KOMMUNE VELFERDSETATEN
+              orgno: "997506413"
+            - name: HELSEDIREKTORATET
+              orgno: "983544622"
+            - name: STATSFORVALTEREN I OSLO OG VIKEN
+              orgno: "974761319"
+            - name: STATSFORVALTEREN I AGDER
+              orgno: "974762994"
+            - name: STATENS PENSJONSKASSE FORVALTNINGSBEDRIFT
+              orgno: "982583462"
+            - name: LUFTFARTSTILSYNET
+              orgno: "981105516"
+            - name: KOMMUNAL LANDSPENSJONSKASSE GJENSIDIG FORSIKRINGSSELSKAP
+              orgno: "938708606"
+            - name: ØSTFOLD FYLKESKOMMUNE
+              orgno: "930580694"
+            - name: OSLO PENSJONSFORSIKRING AS
+              orgno: "982759412"
+  azure:
+    application:
+      enabled: true
+  observability:
+    autoInstrumentation:
+      enabled: true
+      runtime: java

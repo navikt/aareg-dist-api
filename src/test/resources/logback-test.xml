@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <logger name="org.springframework" level="ERROR"/>
+    <logger name="org.eclipse.jetty" level="OFF"/>
+    <logger name="no.nav.aareg" level="INFO"/>
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%date [%-5level] %logger{1} -- %message%n</pattern>
+        </encoder>
+    </appender>
+
+    <root level="WARN">
+        <appender-ref ref="STDOUT"/>
+    </root>
+
+    <logger name="team-logs-logger" level="WARN" additivity="false">
+        <appender-ref ref="STDOUT"/>
+    </logger>
+</configuration>

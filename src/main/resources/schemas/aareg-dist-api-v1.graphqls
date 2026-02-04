@@ -1,0 +1,624 @@
+schema {
+    query: AaregDistApiQueries
+}
+
+type AaregDistApiQueries {
+    """
+    Returnerer en liste av arbeidsforhold
+    """
+    finnArbeidsforhold(finnArbeidsforholdVariabler: FinnArbeidsforholdVariabler): FinnArbeidsforholdRespons
+}
+
+"""
+Variabler for finnArbeidsforhold:
+- opplysningspliktigId: Norsk identifikator for opplysningspliktig (hovedenhet eller person). Eksempel: 987654321 (org.nr.) eller 01010112345 (fnr/dnr)
+- arbeidsstedId: Norsk identifikator for arbeidssted (underenhet eller person). Eksempel: Eksempel: 876543210 (org.nr.) eller 01010112345 (fnr/dnr)
+- arbeidstakerId: Norsk identifikator for arbeidstaker. Eksempel: 31129954321 (fnr/dnr)
+- arbeidsforholdtype: Obligatorisk unikt sett med hvilke type(r) arbeidshold som skal returneres. Gyldige verdier: [ordinaertArbeidsforhold, maritimtArbeidsforhold, frilanserOppdragstakerHonorarPersonerMm, forenkletOppgjoersordning]
+- rapporteringsordning: Obligatorisk unikt sett med hvilke(n) rapporteringsordning(er) for arbeidsforhold som skal returneres. Gyldige verdier: [A_ORDNINGEN, FOER_A_ORDNINGEN]
+- arbeidsforholdstatus: Obligatorisk unikt sett med hvilke(n) status(er) for arbeidsforhold som skal returneres. Gyldige verdier: [AKTIV, AVSLUTTET, FREMTIDIG]
+- ansettelsesdetaljerhistorikk: Inkludering av historikk for ansettelsesdetaljer (true/false). Default: false
+
+MERK: Minst 1 id må være angitt, dvs. arbeidstakerId og/eller arbeidsstedId og/eller opplysningspliktigId
+"""
+input FinnArbeidsforholdVariabler {
+    opplysningspliktigId: ID
+    arbeidsstedId: ID
+    arbeidstakerId: ID
+    arbeidsforholdtype: [Arbeidsforholdtype]
+    rapporteringsordning: [Rapporteringsordning]
+    arbeidsforholdstatus: [Arbeidsforholdstatus]
+    ansettelsesdetaljerhistorikk: Boolean
+}
+
+type FinnArbeidsforholdRespons {
+    """
+    Liste med arbeidsforhold per arbeidstaker
+    """
+    arbeidsforhold: [Arbeidsforhold!]
+}
+
+"""
+Inneholder informasjon om et arbeidsforhold
+"""
+type Arbeidsforhold {
+    """
+    Arbeidsforhold-id fra opplysningspliktig
+    """
+    id: String
+    """
+    Type arbeidsforhold
+    Benytter kodeverk: Arbeidsforholdtyper
+    """
+    type: Kodeverksentitet!
+    """
+    Informasjon om arbeidstaker
+    """
+    arbeidstaker: Arbeidstaker!
+    """
+    Informasjon om arbeidssted/underenhet
+    """
+    arbeidssted: Arbeidssted!
+    """
+    Informasjon om opplysningspliktig/hovedenhet
+    """
+    opplysningspliktig: Opplysningspliktig!
+    """
+    Informasjon om ansettelsesperiode
+    """
+    ansettelsesperiode: Ansettelsesperiode!
+    """
+    Liste av ansettelsesdetaljer
+    Inneholder gjeldende og eventuelt historiske ansettelsesdetaljer
+    """
+    ansettelsesdetaljer: [Ansettelsesdetaljer!]!
+    """
+    Liste av permisjoner
+    """
+    permisjoner: [Permisjon!]
+    """
+    Liste av permitteringer
+    """
+    permitteringer: [Permittering!]
+    """
+    Liste av timer med timelønn
+    """
+    timerMedTimeloenn: [TimerMedTimeloenn!]
+    """
+    Liste av utenlandsopphold
+    """
+    utenlandsopphold: [Utenlandsopphold!]
+    """
+    Liste av historiske arbeidsforhold-id'er
+    """
+    idHistorikk: [IdHistorikk]
+    """
+    Liste av varsler tilknyttet arbeidsforholdet
+    """
+    varsler: [Varsel!]
+    """
+    Ordning som arbeidsforholdet er innrapportert
+    """
+    rapporteringsordning: Kodeverksentitet!
+    """
+    NAV sin unike id for arbeidforholdet.
+    Benyttes for å ikke kommunisere sensitive data.
+    """
+    uuid: String!
+    """
+    Dato for opprettelse av arbeidsforholdet.
+    Format (ISO-8601): yyyy-MM-dd'T'hh:mm:ss.
+    Eksempel: 2018-01-01T12:00:00.
+    """
+    opprettet: DateTime!
+    """
+    Dato for siste bekreftelse av arbeidsforholdet.
+    Format (ISO-8601): yyyy-MM-dd'T'hh:mm:ss.
+    Eksempel: 2018-01-01T12:00:00.
+    """
+    sistBekreftet: DateTime!
+    """
+    Dato arbeidsforholdet ble sist endret.
+    Format (ISO-8601): yyyy-MM-dd'T'hh:mm:ss.
+    Eksempel: 2018-01-01T12:00:00.
+    """
+    sistEndret: DateTime
+}
+
+"""
+Inneholder informasjon om arbeidstaker
+"""
+type Arbeidstaker {
+    """
+    Gjeldende norsk identifikator
+    """
+    ident: String!
+}
+
+"""
+Inneholder informasjon om arbeidssted
+Også omtalt som underenhet eller virksomhet
+- Selve bedriften en arbeider utfører arbeid for.
+"""
+type Arbeidssted {
+    """
+    Type arbeidssted
+    Kan være underenhet eller person
+    """
+    type: String!
+    """
+    Organisasjonsnummer dersom type er underenhet.
+    Gjeldende norsk identifikator dersom type er person
+    """
+    ident: String!
+}
+
+"""
+Inneholder informasjon om opplysningspliktig
+Også omtalt som hovedenhet
+- Den juridiske enheten til en underenhet.
+"""
+type Opplysningspliktig {
+    """
+    Type opplysningspliktig
+    Kan være hovedenhet eller person
+    """
+    type: String!
+    """
+    Organisasjonsnummer dersom type er hovedenhet.
+    Gjeldende norsk identifikator dersom type er person
+    """
+    ident: String!
+}
+
+"""
+Inneholder informasjon knyttet til ansettelsesperiode
+"""
+type Ansettelsesperiode {
+    """
+    Startdato for ansettelsesperiode
+    """
+    startdato: Date!
+    """
+    Sluttdato for ansettelsesperiode
+    """
+    sluttdato: Date
+    """
+    Årsak for avsluttet ansettelsesperiode
+    Benytter kodeverk: SluttårsakAareg
+    """
+    sluttaarsak: Kodeverksentitet
+    """
+    Varsling benyttes hvis ansettelsesperiode er lukket maskinelt av NAV
+    Benytter kodeverk: Varslingskode_Aa-registeret
+    """
+    varsling: Kodeverksentitet
+}
+
+"""
+Inneholder informasjon om ansettelsesdetaljer
+"""
+interface Ansettelsesdetaljer {
+    """
+    Type ansettelsesdetaljer
+    """
+    type: String!
+    """
+    Arbeidstidsordning
+    Benytter kodeverk: Arbeidstidsordninger
+    """
+    arbeidstidsordning: Kodeverksentitet
+    """
+    Ansettelsesform
+    """
+    ansettelsesform: Kodeverksentitet
+    """
+    Yrke (kodeverk: Yrker)
+    """
+    yrke: Kodeverksentitet
+    """
+    Antall timer per uke
+    """
+    antallTimerPrUke: Float
+    """
+    Avtalt stillingsprosent
+    """
+    avtaltStillingsprosent: Float
+    """
+    Dato for siste stillingsprosent-endring
+    """
+    sisteStillingsprosentendring: Date
+    """
+    Dato for siste lønnsendring
+    """
+    sisteLoennsendring: Date
+    """
+    Rapporteringsmåneder for ansettelsesdetaljer
+    """
+    rapporteringsmaaneder: Rapporteringsmaaneder!
+}
+
+type OrdinaerAnsettelsesdetaljer implements Ansettelsesdetaljer {
+    """
+    Type ansettelsesdetaljer: Ordinaer
+    """
+    type: String!
+    """
+    Arbeidstidsordning
+    Benytter kodeverk: Arbeidstidsordninger
+    """
+    arbeidstidsordning: Kodeverksentitet
+    """
+    Ansettelsesform
+    """
+    ansettelsesform: Kodeverksentitet
+    """
+    Yrke (kodeverk: Yrker)
+    """
+    yrke: Kodeverksentitet
+    """
+    Antall timer per uke
+    """
+    antallTimerPrUke: Float
+    """
+    Avtalt stillingsprosent
+    """
+    avtaltStillingsprosent: Float
+    """
+    Dato for siste stillingsprosent-endring
+    """
+    sisteStillingsprosentendring: Date
+    """
+    Dato for siste lønnsendring
+    """
+    sisteLoennsendring: Date
+    """
+    Rapporteringsmåneder for ansettelsesdetaljer
+    """
+    rapporteringsmaaneder: Rapporteringsmaaneder!
+}
+
+type ForenkletAnsettelsesdetaljer implements Ansettelsesdetaljer {
+    """
+    Type ansettelsesdetaljer: Forenklet
+    """
+    type: String!
+    """
+    Arbeidstidsordning
+    Benytter kodeverk: Arbeidstidsordninger
+    """
+    arbeidstidsordning: Kodeverksentitet
+    """
+    Ansettelsesform
+    """
+    ansettelsesform: Kodeverksentitet
+    """
+    Yrke (kodeverk: Yrker)
+    """
+    yrke: Kodeverksentitet
+    """
+    Antall timer per uke
+    """
+    antallTimerPrUke: Float
+    """
+    Avtalt stillingsprosent
+    """
+    avtaltStillingsprosent: Float
+    """
+    Dato for siste stillingsprosent-endring
+    """
+    sisteStillingsprosentendring: Date
+    """
+    Dato for siste lønnsendring
+    """
+    sisteLoennsendring: Date
+    """
+    Rapporteringsmåneder for ansettelsesdetaljer
+    """
+    rapporteringsmaaneder: Rapporteringsmaaneder!
+}
+
+type FrilanserAnsettelsesdetaljer implements Ansettelsesdetaljer {
+    """
+    Type ansettelsesdetaljer: Frilanser
+    """
+    type: String!
+    """
+    Arbeidstidsordning
+    Benytter kodeverk: Arbeidstidsordninger
+    """
+    arbeidstidsordning: Kodeverksentitet
+    """
+    Ansettelsesform
+    """
+    ansettelsesform: Kodeverksentitet
+    """
+    Yrke (kodeverk: Yrker)
+    """
+    yrke: Kodeverksentitet
+    """
+    Antall timer per uke
+    """
+    antallTimerPrUke: Float
+    """
+    Avtalt stillingsprosent
+    """
+    avtaltStillingsprosent: Float
+    """
+    Dato for siste stillingsprosent-endring
+    """
+    sisteStillingsprosentendring: Date
+    """
+    Dato for siste lønnsendring
+    """
+    sisteLoennsendring: Date
+    """
+    Rapporteringsmåneder for ansettelsesdetaljer
+    """
+    rapporteringsmaaneder: Rapporteringsmaaneder!
+}
+
+type MaritimAnsettelsesdetaljer implements Ansettelsesdetaljer {
+    """
+    Type ansettelsesdetaljer: Maritim
+    """
+    type: String!
+    """
+    Arbeidstidsordning
+    Benytter kodeverk: Arbeidstidsordninger
+    """
+    arbeidstidsordning: Kodeverksentitet
+    """
+    Ansettelsesform
+    """
+    ansettelsesform: Kodeverksentitet
+    """
+    Yrke (kodeverk: Yrker)
+    """
+    yrke: Kodeverksentitet
+    """
+    Antall timer per uke
+    """
+    antallTimerPrUke: Float
+    """
+    Avtalt stillingsprosent
+    """
+    avtaltStillingsprosent: Float
+    """
+    Dato for siste stillingsprosent-endring
+    """
+    sisteStillingsprosentendring: Date
+    """
+    Dato for siste lønnsendring
+    """
+    sisteLoennsendring: Date
+    """
+    Rapporteringsmåneder for ansettelsesdetaljer
+    """
+    rapporteringsmaaneder: Rapporteringsmaaneder!
+    """
+    Fartsområde
+    Benytter kodeverk: Fartsområde
+    """
+    fartsomraade: Kodeverksentitet
+    """
+    Skipsregister
+    Benytter kodeverk: Skipsregister
+    """
+    skipsregister: Kodeverksentitet
+    """
+    Fartøystype
+    Benytter kodeverk: Skipstyper
+    """
+    fartoeystype: Kodeverksentitet
+}
+
+"""
+Informasjon om Id-historikk
+"""
+type IdHistorikk {
+    """
+    Tidligere benyttet Id for arbeidsforholdet
+    """
+    id: String
+}
+
+"""
+Informasjon om permisjon
+"""
+type Permisjon {
+    """
+    Permisjon-id fra opplysningspliktig
+    """
+    id: String
+    """
+    Type permisjon (kodeverk: PermisjonsOgPermitteringsBeskrivelse)
+    """
+    type: Kodeverksentitet!
+    """
+    Fra-og-med-dato, format (ISO-8601): yyyy-MM-dd, eksempel: 2020-01-20
+    """
+    startdato: Date!
+    """
+    Til-og-med-dato, format (ISO-8601): yyyy-MM-dd, eksempel: 2020-01-20
+    """
+    sluttdato: Date
+    """
+    Permisjonsprosent
+    """
+    prosent: Float!
+    """
+    Varslingskode (kodeverk: Varslingskode_5fAa-registeret)
+    Benyttes dersom permisjon er lukket maskinelt
+    """
+    varsling: Kodeverksentitet
+}
+
+"""
+Informasjon om permittering
+"""
+type Permittering {
+    """
+    Permittering-id fra opplysningspliktig
+    """
+    id: String
+    """
+    Type permittering (kodeverk: PermisjonsOgPermitteringsBeskrivelse)
+    """
+    type: Kodeverksentitet!
+    """
+    Fra-og-med-dato, format (ISO-8601): yyyy-MM-dd, eksempel: 2020-01-20
+    """
+    startdato: Date!
+    """
+    Til-og-med-dato, format (ISO-8601): yyyy-MM-dd, eksempel: 2020-01-20
+    """
+    sluttdato: Date
+    """
+    Permitteringsprosent
+    """
+    prosent: Float!
+    """
+    Varslingskode (kodeverk: Varslingskode_5fAa-registeret)
+    Benyttes dersom permitteringen er lukket maskinelt
+    """
+    varsling: Kodeverksentitet
+}
+
+"""
+Informasjon om timer med timelønn
+"""
+type TimerMedTimeloenn {
+    """
+    Antall timer med timelønn
+    """
+    antall: Float!
+    """
+    Fra-og-med-dato, format (ISO-8601): yyyy-MM-dd, eksempel: 2020-01-20
+    """
+    startdato: Date
+    """
+    Til-og-med-dato, format (ISO-8601): yyyy-MM-dd, eksempel: 2020-01-20
+    """
+    sluttdato: Date
+    """
+    År og måned for rapporteringen, format (ISO-8601): yyyy-MM, eksempel: 2020-01
+    """
+    rapporteringsmaaned: YearMonth!
+}
+
+type Utenlandsopphold {
+    """
+    Land
+    """
+    land: Kodeverksentitet!
+    """
+    Fra-og-med-dato, format (ISO-8601): yyyy-MM-dd, eksempel: 2020-01-20
+    """
+    startdato: Date
+    """
+    Til-og-med-dato, format (ISO-8601): yyyy-MM-dd, eksempel: 2020-01-20
+    """
+    sluttdato: Date
+    """
+    År og måned for rapporteringen, format (ISO-8601): yyyy-MM, eksempel: 2020-01
+    """
+    rapporteringsmaaned: YearMonth!
+}
+
+"""
+Informasjon om varsel
+"""
+type Varsel {
+    """
+    Entitet for varsel, eksempel: Ansettelsesperiode
+    """
+    entitet: Varselentitet!
+    """
+    Varslingskode (kodeverk: Varslingskode_5fAa-registeret)
+    """
+    varsling: Kodeverksentitet!
+}
+
+"""
+Informasjon om rapporteringsmåneder (funksjonell historikk)
+"""
+type Rapporteringsmaaneder {
+    """
+    Første rapporteringsmåned for informasjon, format (ISO-8601): yyyy-MM, eksempel: 2017-12
+    """
+    fra: YearMonth!
+    """
+    Siste rapporteringsmåned for informasjon - tom hvis gjeldende, format (ISO-8601): yyyy-MM, eksempel: 2018-11
+    """
+    til: YearMonth
+}
+
+"""
+Informasjon om kode og tilknyttende beskrivelse av en kodeverk-kode
+"""
+type Kodeverksentitet {
+    """
+    Kode
+    """
+    kode: String!
+    """
+    Beskrivelse hentet fra kodeverk
+    """
+    beskrivelse: String
+}
+"""
+Typen arbeidsforhold man ønsker å få returnert
+"""
+enum Arbeidsforholdtype {
+    ordinaertArbeidsforhold,
+    maritimtArbeidsforhold,
+    frilanserOppdragstakerHonorarPersonerMm,
+    forenkletOppgjoersordning
+}
+"""
+Status for arbeidsforhold man ønsker returnert
+"""
+enum Arbeidsforholdstatus {
+    """Arbeidsforhold definert som aktive på oppslagstidspunkt"""
+    AKTIV,
+    """Arbeidsforhold definert som avsluttet på oppslagstidspunkt"""
+    AVSLUTTET,
+    """Arbeidsforhold som er rapportert inn med oppstartsdato frem i tid fra oppslagstidspunkt"""
+    FREMTIDIG
+}
+
+"""
+Angir hvilke(n) rapporteringsordning man ønsker arbeidsforhold fra.
+"""
+enum Rapporteringsordning {
+    """Arbeidsforhold rapportert via a-ordningen (2015-d.d.)"""
+    A_ORDNINGEN,
+    """Arbeidsforhold rapportert før a-ordningen (1978-2014)"""
+    FOER_A_ORDNINGEN
+}
+
+"""
+Varselentitet
+"""
+enum Varselentitet {
+    Arbeidsforhold,
+    Ansettelsesperiode,
+    Permisjon,
+    Permittering
+}
+
+"""
+ISO-8601 representasjon for en kalenderdato. yyyy-MM-dd. Eksempel: 2018-01-01.
+"""
+scalar Date
+
+"""
+ISO-8601 representasjon for en kalenderdato med tid, trunkert til nærmeste sekund. yyyy-MM-dd'T'hh:mm:ss. Eksempel: 2018-01-01T12:00:00.
+"""
+scalar DateTime
+
+"""
+ISO-8601 representajon for en kalendermåned. yyyy-MM. Eksempel: 2018-05
+"""
+scalar YearMonth
