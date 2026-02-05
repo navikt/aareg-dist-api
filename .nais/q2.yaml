@@ -17,6 +17,7 @@ spec:
       rules:
         - application: aareg-tilgangskontroll-q2
           namespace: arbeidsforhold
+          cluster: dev-gcp
         - application: logging
           namespace: nais-system
       external:
