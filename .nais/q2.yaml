@@ -44,7 +44,7 @@ spec:
       value: https://login.microsoftonline.com/966ac572-f5b7-4bbe-aa88-c76419c0f851/discovery/v2.0/keys
 
     - name: APP_URL_AAREG_TILGANGSKONTROLL
-      value: https://aareg-tilgangskontroll.intern.dev.nav.no
+      value: https://aareg-tilgangskontroll-q2.intern.dev.nav.no
     - name: APP_SCOPE_AAREG_TILGANGSKONTROLL
       value: api://dev-gcp.arbeidsforhold.aareg-tilgangskontroll-q2/.default
 
