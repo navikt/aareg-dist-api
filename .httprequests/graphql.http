@@ -19,10 +19,10 @@ Content-Type: application/json
       "opplysningspliktigId": "{{opplysningspliktig}}",
       "arbeidsstedId": "{{arbeidssted}}",
       "arbeidstakerId": "{{arbeidstaker}}",
-      "arbeidsforholdtype": ["ordinaertArbeidsforhold","maritimtArbeidsforhold","frilanserOppdragstakerHonorarPersonerMm","forenkletOppgjoersordning"],
-      "rapporteringsordning": "[{{rapporteringsordning}}]",
+      "arbeidsforholdtype": ["ordinaertArbeidsforhold"],
+      "rapporteringsordning": ["A_ORDNINGEN"],
       "arbeidsforholdstatus": ["AKTIV","AVSLUTTET","FREMTIDIG"],
-      "ansettelsesdetaljerhistorikk": "{{historikk}}"
+      "ansettelsesdetaljerhistorikk": {{historikk}}
     }
   }
 }

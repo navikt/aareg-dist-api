@@ -282,7 +282,7 @@ class FinnArbeidsforholdTest extends GraphQLTestBase {
                 () -> assertErrormessageCodes(expectedErrormessageCodes, response),
                 () -> assertErrormessageDetails(expectedErrormessageDetails, response),
                 () -> assertNoData(response),
-                () -> verify(mockedSystemLogAppender, times(3)).doAppend(systemLogEventArgumentCaptor.capture()),
+                () -> verify(mockedSystemLogAppender, times(2)).doAppend(systemLogEventArgumentCaptor.capture()),
                 () -> assertTrue(logMessageExists(systemLogEventArgumentCaptor, INFO, correlationId, ValidationError.name() + "|" + UgyldigInput.class.getSimpleName()))
         );
     }
@@ -357,7 +357,7 @@ class FinnArbeidsforholdTest extends GraphQLTestBase {
                 () -> assertErrormessageCodes(expectedErrormessageCodes, response),
                 () -> assertErrormessageDetails(expectedErrormessageDetails, response),
                 () -> assertNoData(response),
-                () -> verify(mockedSystemLogAppender, times(3)).doAppend(systemLogEventArgumentCaptor.capture()),
+                () -> verify(mockedSystemLogAppender, times(2)).doAppend(systemLogEventArgumentCaptor.capture()),
                 () -> assertTrue(logMessageExists(systemLogEventArgumentCaptor, INFO, correlationId, ValidationError.name() + "|" + UgyldigInput.class.getSimpleName()))
         );
     }
@@ -392,7 +392,7 @@ class FinnArbeidsforholdTest extends GraphQLTestBase {
                 () -> assertErrormessageCodes(expectedErrormessageCodes, response),
                 () -> assertErrormessageDetails(expectedErrormessageDetails, response),
                 () -> assertNoData(response),
-                () -> verify(mockedSystemLogAppender, times(3)).doAppend(systemLogEventArgumentCaptor.capture()),
+                () -> verify(mockedSystemLogAppender, times(2)).doAppend(systemLogEventArgumentCaptor.capture()),
                 () -> assertTrue(logMessageExists(systemLogEventArgumentCaptor, INFO, correlationId, ValidationError.name() + "|" + UgyldigInput.class.getSimpleName()))
         );
     }
@@ -602,7 +602,7 @@ class FinnArbeidsforholdTest extends GraphQLTestBase {
                 () -> assertErrormessageDetails(expectedErrormessageDetails, response),
                 () -> assertNoData(response),
                 () -> verify(mockedAuditLogAppender, times(0)).doAppend(any()),
-                () -> verify(mockedSystemLogAppender, times(5)).doAppend(systemLogEventArgumentCaptor.capture()),
+                () -> verify(mockedSystemLogAppender, times(4)).doAppend(systemLogEventArgumentCaptor.capture()),
                 () -> assertTrue(logMessageExists(systemLogEventArgumentCaptor, ERROR, correlationId, ExecutionAborted.name()))
         );
     }

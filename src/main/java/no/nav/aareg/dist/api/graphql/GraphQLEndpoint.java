@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import static graphql.ExecutionInput.newExecutionInput;
@@ -121,7 +122,15 @@ public class GraphQLEndpoint {
             String databehandler,
             StopWatch stopWatch
     ) {
-        var antall = executionResult.getData() != null ? ((LinkedHashMap) executionResult.getData()).size() : -1;
+        int antall = -1;
+        var data = executionResult.getData() != null ? ((LinkedHashMap) executionResult.getData()) : null;
+        if (data != null) {
+            var finnArbeidsforholdData = data.get("finnArbeidsforhold");
+            if (finnArbeidsforholdData != null) {
+                antall = ((LinkedHashMap) finnArbeidsforholdData).size();
+            }
+        }
+
         var behandlingstid = String.valueOf(stopWatch.getTotalTimeNanos() / 1_000_000);
         var databehandlerNonNull = ofNullable(databehandler).orElse("");
 
