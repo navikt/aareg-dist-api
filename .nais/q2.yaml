@@ -22,6 +22,7 @@ spec:
           namespace: nais-system
       external:
         - host: aareg-dist-mottak.dev-fss-pub.nais.io
+        - host: aareg-tilgangskontroll-q2.intern.dev.nav.no
 
   env:
     - name: STACK
