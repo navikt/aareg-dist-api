@@ -22,7 +22,6 @@ spec:
           namespace: nais-system
       external:
         - host: aareg-dist-mottak.dev-fss-pub.nais.io
-        - host: aareg-tilgangskontroll-q2.intern.dev.nav.no
 
   env:
     - name: STACK
@@ -48,7 +47,7 @@ spec:
       value: https://login.microsoftonline.com/966ac572-f5b7-4bbe-aa88-c76419c0f851/discovery/v2.0/keys
 
     - name: APP_URL_AAREG_TILGANGSKONTROLL
-      value: https://aareg-tilgangskontroll-q2.intern.dev.nav.no
+      value: http://aareg-tilgangskontroll-q2
     - name: APP_SCOPE_AAREG_TILGANGSKONTROLL
       value: api://dev-gcp.arbeidsforhold.aareg-tilgangskontroll-q2/.default
 
