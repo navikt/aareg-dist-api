@@ -200,6 +200,12 @@ spec:
               orgno: "938708606"
             - name: OSLO PENSJONSFORSIKRING AS
               orgno: "982759412"
+            - name: OSLO KOMMUNE, ØKONOMI- OG FORVALTNINGSETATEN
+              orgno: "935346282"
+            - name: NÆRINGSLIVETS SIKKERHETSORGANISASJON
+              orgno: "960478150"
+            - name: INTEGRERINGS- OG MANGFOLDSDIREKTORATET
+              orgno: "987879696"
   azure:
     application:
       enabled: true
