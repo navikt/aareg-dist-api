@@ -109,6 +109,7 @@ public class GraphQLEndpoint {
             } else {
                 aaregExecutionResult = new AaregExecutionResult(queryName, executionResult);
             }
+            stopWatch.stop();
             log(request, executionResult, organisasjon, databehandler, stopWatch);
         }
 
@@ -127,7 +128,11 @@ public class GraphQLEndpoint {
         if (data != null) {
             var finnArbeidsforholdData = data.get("finnArbeidsforhold");
             if (finnArbeidsforholdData != null) {
-                antall = ((LinkedHashMap) finnArbeidsforholdData).size();
+                var arbeidsforholdMap = (LinkedHashMap) finnArbeidsforholdData;
+                var arbeidsforholdArray = (List) arbeidsforholdMap.get("arbeidsforhold");
+                if (arbeidsforholdArray != null) {
+                    antall = arbeidsforholdArray.size();
+                }
             }
         }
 
