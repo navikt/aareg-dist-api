@@ -538,7 +538,7 @@ class FinnArbeidsforholdTest extends GraphQLTestBase {
                 () -> assertNoData(response),
                 () -> verify(mockedAuditLogAppender, times(1)).doAppend(auditLogEventArgumentCaptor.capture()),
                 () -> assertAuditPermit(auditLogEventArgumentCaptor, ARBEIDSTAKER_FNR, arbeidsforholdliste.size()),
-                () -> verify(mockedSystemLogAppender, times(6)).doAppend(systemLogEventArgumentCaptor.capture())
+                () -> verify(mockedSystemLogAppender, times(5)).doAppend(systemLogEventArgumentCaptor.capture())
         );
     }
 
