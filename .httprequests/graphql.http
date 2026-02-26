@@ -17,8 +17,6 @@ Content-Type: application/json
   "variables": {
     "finnArbeidsforholdVariabler": {
       "opplysningspliktigId": "{{opplysningspliktig}}",
-      "arbeidsstedId": "{{arbeidssted}}",
-      "arbeidstakerId": "{{arbeidstaker}}",
       "arbeidsforholdtype": ["ordinaertArbeidsforhold"],
       "rapporteringsordning": ["A_ORDNINGEN"],
       "arbeidsforholdstatus": ["AKTIV","AVSLUTTET","FREMTIDIG"],

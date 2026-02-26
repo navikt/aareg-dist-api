@@ -131,7 +131,7 @@ public class GraphQLEndpoint {
             }
         }
 
-        var behandlingstid = String.valueOf(stopWatch.getTotalTimeNanos() / 1_000_000);
+        var behandlingstid = String.valueOf(stopWatch.getTotalTimeNanos() / 1000000L);
         var databehandlerNonNull = ofNullable(databehandler).orElse("");
 
         MDC.put(COUNT, String.valueOf(antall));
