@@ -18,3 +18,14 @@ graphql:
       # Enable or disable the introspection query. Disabling it puts your server in contravention of the GraphQL
       # specification and expectations of most clients, so use this option with caution
       introspection-enabled: true
+
+management:
+  metrics:
+    distribution:
+      percentiles-histogram:
+        http.server.requests: true
+  endpoint:
+    health.show-details: always
+  endpoints.web:
+    exposure:
+      include: prometheus,health
