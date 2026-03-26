@@ -5,6 +5,9 @@ metadata:
   namespace: arbeidsforhold
   labels:
     team: arbeidsforhold
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "600"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "600"
 spec:
   accessPolicy:
     inbound:
