@@ -67,8 +67,8 @@ spec:
   ingresses:
     - https://aareg-dist-api.nav.no
   replicas:
-    min: 2
-    max: 2
+    min: 4
+    max: 4
     cpuThresholdPercentage: 50
   liveness:
     path: /internal/isAlive
@@ -84,9 +84,9 @@ spec:
   resources:
     requests:
       cpu: 25m
-      memory: 1024Mi
+      memory: 2Gi
     limits:
-      memory: 3Gi
+      memory: 10Gi
   prometheus:
     enabled: true
     path: actuator/prometheus
