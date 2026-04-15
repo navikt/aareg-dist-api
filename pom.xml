@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>4.0.2</version>
+        <version>4.0.5</version>
     </parent>
 
     <groupId>no.nav.aareg</groupId>
@@ -21,7 +21,7 @@
         <!-- dist-libs/common -->
         <logback-syslog4j.version>1.0.0</logback-syslog4j.version>
         <logstash-logback-encoder.version>9.0</logstash-logback-encoder.version>
-        <commons-collections4.version>4.4</commons-collections4.version>
+        <commons-collections4.version>4.5.0</commons-collections4.version>
 
         <!-- dist-libs/graphql -->
         <graphql-spring-boot-starter.version>15.1.0</graphql-spring-boot-starter.version>
@@ -30,7 +30,7 @@
         <aareg-meldingsdefinisjon.version>2.3.0</aareg-meldingsdefinisjon.version>
 
         <!-- Test -->
-        <wiremock.version>3.3.1</wiremock.version>
+        <wiremock.version>3.13.2</wiremock.version>
 
     </properties>
 
@@ -155,7 +155,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-enforcer-plugin</artifactId>
-                <version>3.0.0-M3</version>
+                <version>3.6.2</version>
                 <executions>
                     <execution>
                         <goals>
@@ -173,7 +173,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
-                <version>3.5.0</version>
+                <version>3.10.0</version>
             </plugin>
 
         </plugins>
