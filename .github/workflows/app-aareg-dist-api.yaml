@@ -12,6 +12,9 @@ on:
           - p
           - dev
           - all
+  push:
+    branches:
+      - 'main'
 
 jobs:
   build_and_push:
