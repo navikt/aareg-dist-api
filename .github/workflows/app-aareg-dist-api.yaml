@@ -66,7 +66,7 @@ jobs:
   deploy-dev:
     name: Deploy to NAIS dev-gcp (Q2)
     needs: build_and_push
-    if: github.ref == 'refs/heads/main' || github.event.inputs.environment == 'dev' || github.event.inputs.environment == 'q2' || github.event.inputs.environment == 'all'
+    if: github.ref == 'refs/heads/main' || github.event.inputs.environment == 'dev' || github.event.inputs.environment == 'all'
     runs-on: ubuntu-latest
     permissions:
       contents: read
