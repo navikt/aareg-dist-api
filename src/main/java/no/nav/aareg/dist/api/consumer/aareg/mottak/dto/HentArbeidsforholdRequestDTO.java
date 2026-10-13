@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -22,8 +23,8 @@ public class HentArbeidsforholdRequestDTO {
     @Builder.Default private Set<Rapporteringsordning> rapporteringsordninger = Collections.emptySet();
     @Builder.Default private Set<Arbeidsforholdstatus> arbeidsforholdstatuser = Collections.emptySet();
     @Getter private Boolean historikk;
-    @Getter private String ansattFra;
-    @Getter private String ansattTil;
+    @Getter private LocalDate ansattFra;
+    @Getter private LocalDate ansattTil;
 
     public enum Arbeidsforholdstatus {
         AKTIV,
