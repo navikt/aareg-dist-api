@@ -67,6 +67,16 @@ public class GraphQLRequestBuilder {
         return this;
     }
 
+    public GraphQLRequestBuilder ansattFra(String ansattFra) {
+        ((FinnArbeidsforholdVariabler) variables.get(FINN_ARBEIDSFORHOLD_VARIABLER)).setAnsattFra(ansattFra);
+        return this;
+    }
+
+    public GraphQLRequestBuilder ansattTil(String ansattTil) {
+        ((FinnArbeidsforholdVariabler) variables.get(FINN_ARBEIDSFORHOLD_VARIABLER)).setAnsattTil(ansattTil);
+        return this;
+    }
+
     public GraphQLRequestBuilder correlationId(String correlationId) {
         headers.put(CORRELATION_ID, correlationId);
         return this;

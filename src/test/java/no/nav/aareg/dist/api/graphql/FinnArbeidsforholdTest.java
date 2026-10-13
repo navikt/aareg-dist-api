@@ -1,5 +1,6 @@
 package no.nav.aareg.dist.api.graphql;
 
+import com.github.tomakehurst.wiremock.client.WireMock;
 import graphql.execution.AbortExecutionException;
 import graphql.execution.InputMapDefinesTooManyFieldsException;
 import graphql.schema.CoercingParseValueException;
@@ -39,6 +40,8 @@ import static no.nav.aareg.dist.api.graphql.exception.AaregDistApiFeilkode.MANGL
 import static no.nav.aareg.dist.api.graphql.exception.AaregDistApiFeilkode.MANGLENDE_VARIABEL_ARBEIDSFORHOLDTYPE;
 import static no.nav.aareg.dist.api.graphql.exception.AaregDistApiFeilkode.MANGLENDE_VARIABEL_RAPPORTERINGSORDNING;
 import static no.nav.aareg.dist.api.graphql.exception.AaregDistApiFeilkode.UGYLDIG_DATA;
+import static no.nav.aareg.dist.api.graphql.exception.AaregDistApiFeilkode.UGYLDIG_VARIABEL_ANSATT_DATO_INTERVALL;
+import static no.nav.aareg.dist.api.graphql.exception.AaregDistApiFeilkode.UGYLDIG_VARIABEL_ANSATT_FRA;
 import static no.nav.aareg.dist.api.graphql.exception.AaregDistApiFeilkode.UGYLDIG_VARIABEL_ARBEIDSSTED_ID;
 import static no.nav.aareg.dist.api.graphql.exception.AaregDistApiFeilkode.UGYLDIG_VARIABEL_ARBEIDSTAKER_ID;
 import static no.nav.aareg.dist.api.graphql.exception.AaregDistApiFeilkode.UGYLDIG_VARIABEL_OPPLSYNINGSPLIKTIG_ID;
@@ -146,6 +149,65 @@ class FinnArbeidsforholdTest extends GraphQLTestBase {
                 () -> assertNoErrors(response),
                 () -> verify(mockedAuditLogAppender, times(1)).doAppend(auditLogEventArgumentCaptor.capture()),
                 () -> assertAuditPermit(auditLogEventArgumentCaptor, ARBEIDSTAKER_FNR, Optional.of(correlationId), arbeidsforholdliste.size())
+        );
+    }
+
+    @Test
+    @DisplayName("Skal sende ansettelsesdatofilter videre til aareg-dist-mottak")
+    void scenarioAnsattDatoFiltreSendesVidere() {
+        aaregDistMottakStub.setArbeidsforholdResponse(List.of());
+
+        var response = query(finnArbeidsforhold()
+                .arbeidstakerId(ARBEIDSTAKER_FNR)
+                .arbeidsforholdtype(DEFAULT_ARBEIDSFORHOLDTYPE_SETT)
+                .rapporteringsordning(DEFAULT_RAPPORTERINGSORDNING_SETT)
+                .arbeidsforholdstatus(DEFAULT_ARBEIDSFORHOLDSTATUS_SETT)
+                .ansattFra("2020-01-02")
+                .ansattTil("2024-12-31")
+        );
+
+        assertNoErrors(response);
+        WireMock.verify(WireMock.postRequestedFor(WireMock.urlPathEqualTo("/aareg-dist-mottak/v1/arbeidsforhold/hent-arbeidsforhold"))
+                .withRequestBody(WireMock.matchingJsonPath("$.ansattFra", WireMock.equalTo("2020-01-02")))
+                .withRequestBody(WireMock.matchingJsonPath("$.ansattTil", WireMock.equalTo("2024-12-31"))));
+    }
+
+    @Test
+    @DisplayName("Skal avvise ugyldig format for ansettelsesdato")
+    void scenarioUgyldigAnsattDatoFormat() {
+        var response = query(finnArbeidsforhold()
+                .arbeidstakerId(ARBEIDSTAKER_FNR)
+                .arbeidsforholdtype(DEFAULT_ARBEIDSFORHOLDTYPE_SETT)
+                .rapporteringsordning(DEFAULT_RAPPORTERINGSORDNING_SETT)
+                .arbeidsforholdstatus(DEFAULT_ARBEIDSFORHOLDSTATUS_SETT)
+                .ansattFra("2020-13-01")
+        );
+
+        assertAll(
+                () -> assertErrorMessage(UgyldigInput.ERRORMESSAGE, response),
+                () -> assertErrormessageCodes(getExpectedErrormessageCodes(UGYLDIG_VARIABEL_ANSATT_FRA), response),
+                () -> assertErrormessageDetails(getExpectedErrormessageDetails(UGYLDIG_VARIABEL_ANSATT_FRA), response),
+                () -> assertNoData(response)
+        );
+    }
+
+    @Test
+    @DisplayName("Skal avvise ansettelsesdatointervall der ansattFra er etter ansattTil")
+    void scenarioUgyldigAnsattDatoIntervall() {
+        var response = query(finnArbeidsforhold()
+                .arbeidstakerId(ARBEIDSTAKER_FNR)
+                .arbeidsforholdtype(DEFAULT_ARBEIDSFORHOLDTYPE_SETT)
+                .rapporteringsordning(DEFAULT_RAPPORTERINGSORDNING_SETT)
+                .arbeidsforholdstatus(DEFAULT_ARBEIDSFORHOLDSTATUS_SETT)
+                .ansattFra("2024-01-01")
+                .ansattTil("2023-12-31")
+        );
+
+        assertAll(
+                () -> assertErrorMessage(UgyldigInput.ERRORMESSAGE, response),
+                () -> assertErrormessageCodes(getExpectedErrormessageCodes(UGYLDIG_VARIABEL_ANSATT_DATO_INTERVALL), response),
+                () -> assertErrormessageDetails(getExpectedErrormessageDetails(UGYLDIG_VARIABEL_ANSATT_DATO_INTERVALL), response),
+                () -> assertNoData(response)
         );
     }
 

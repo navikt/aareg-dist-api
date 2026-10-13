@@ -61,6 +61,24 @@ public class AaregDistApiFeilkode extends AaregDistFeilkode {
             null
     );
 
+    public static final AaregDistApiFeilkode UGYLDIG_VARIABEL_ANSATT_FRA = new AaregDistApiFeilkode(
+            "AA-208",
+            "Dato må være på ISO-8601-format (YYYY-MM-DD)",
+            "ansattFra"
+    );
+
+    public static final AaregDistApiFeilkode UGYLDIG_VARIABEL_ANSATT_TIL = new AaregDistApiFeilkode(
+            "AA-209",
+            "Dato må være på ISO-8601-format (YYYY-MM-DD)",
+            "ansattTil"
+    );
+
+    public static final AaregDistApiFeilkode UGYLDIG_VARIABEL_ANSATT_DATO_INTERVALL = new AaregDistApiFeilkode(
+            "AA-210",
+            "ansattFra kan ikke være etter ansattTil",
+            null
+    );
+
     public AaregDistApiFeilkode(String kode, String beskrivelse, String detaljer) {
         super(kode, beskrivelse, detaljer);
     }

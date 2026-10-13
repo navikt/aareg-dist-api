@@ -15,6 +15,7 @@ import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -98,7 +99,13 @@ public class ArbeidsforholdDataService {
                 .rapporteringsordninger(rapporteringsordninger)
                 .arbeidsforholdstatuser(arbeidsforholdstatuser)
                 .historikk(finnArbeidsforholdVariabler.getAnsettelsesdetaljerhistorikk())
+                .ansattFra(parseDate(finnArbeidsforholdVariabler.getAnsattFra()))
+                .ansattTil(parseDate(finnArbeidsforholdVariabler.getAnsattTil()))
                 .build();
+    }
+
+    private static LocalDate parseDate(String date) {
+        return date != null ? LocalDate.parse(date) : null;
     }
 
     private void loggTilgang(

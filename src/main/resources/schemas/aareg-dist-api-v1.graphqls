@@ -18,6 +18,8 @@ Variabler for finnArbeidsforhold:
 - rapporteringsordning: Obligatorisk unikt sett med hvilke(n) rapporteringsordning(er) for arbeidsforhold som skal returneres. Gyldige verdier: [A_ORDNINGEN, FOER_A_ORDNINGEN]
 - arbeidsforholdstatus: Obligatorisk unikt sett med hvilke(n) status(er) for arbeidsforhold som skal returneres. Gyldige verdier: [AKTIV, AVSLUTTET, FREMTIDIG]
 - ansettelsesdetaljerhistorikk: Inkludering av historikk for ansettelsesdetaljer (true/false). Default: false
+- ansattFra: Valgfri nedre grense for ansettelsesdato, ISO-8601-format (YYYY-MM-DD)
+- ansattTil: Valgfri øvre grense for ansettelsesdato, ISO-8601-format (YYYY-MM-DD)
 
 MERK: Minst 1 id må være angitt, dvs. arbeidstakerId og/eller arbeidsstedId og/eller opplysningspliktigId
 """
@@ -29,6 +31,8 @@ input FinnArbeidsforholdVariabler {
     rapporteringsordning: [Rapporteringsordning]
     arbeidsforholdstatus: [Arbeidsforholdstatus]
     ansettelsesdetaljerhistorikk: Boolean
+    ansattFra: String
+    ansattTil: String
 }
 
 type FinnArbeidsforholdRespons {
