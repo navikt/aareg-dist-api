@@ -22,6 +22,8 @@ public class HentArbeidsforholdRequestDTO {
     @Builder.Default private Set<Rapporteringsordning> rapporteringsordninger = Collections.emptySet();
     @Builder.Default private Set<Arbeidsforholdstatus> arbeidsforholdstatuser = Collections.emptySet();
     @Getter private Boolean historikk;
+    @Getter private String ansattFra;
+    @Getter private String ansattTil;
 
     public enum Arbeidsforholdstatus {
         AKTIV,

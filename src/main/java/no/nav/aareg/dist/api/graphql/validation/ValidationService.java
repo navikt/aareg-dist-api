@@ -6,6 +6,8 @@ import no.nav.aareg.dist.api.graphql.exception.UgyldigInput;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,6 +16,9 @@ import static no.nav.aareg.dist.api.graphql.exception.AaregDistApiFeilkode.MANGL
 import static no.nav.aareg.dist.api.graphql.exception.AaregDistApiFeilkode.MANGLENDE_VARIABEL_ARBEIDSFORHOLDTYPE;
 import static no.nav.aareg.dist.api.graphql.exception.AaregDistApiFeilkode.MANGLENDE_VARIABEL_RAPPORTERINGSORDNING;
 import static no.nav.aareg.dist.api.graphql.exception.AaregDistApiFeilkode.UGYLDIG_SPOERRING;
+import static no.nav.aareg.dist.api.graphql.exception.AaregDistApiFeilkode.UGYLDIG_VARIABEL_ANSATT_DATO_INTERVALL;
+import static no.nav.aareg.dist.api.graphql.exception.AaregDistApiFeilkode.UGYLDIG_VARIABEL_ANSATT_FRA;
+import static no.nav.aareg.dist.api.graphql.exception.AaregDistApiFeilkode.UGYLDIG_VARIABEL_ANSATT_TIL;
 import static no.nav.aareg.dist.api.graphql.exception.AaregDistApiFeilkode.UGYLDIG_VARIABEL_ARBEIDSSTED_ID;
 import static no.nav.aareg.dist.api.graphql.exception.AaregDistApiFeilkode.UGYLDIG_VARIABEL_ARBEIDSTAKER_ID;
 import static no.nav.aareg.dist.api.graphql.exception.AaregDistApiFeilkode.UGYLDIG_VARIABEL_OPPLSYNINGSPLIKTIG_ID;
@@ -33,6 +38,7 @@ public class ValidationService {
         } else {
             validerIdentifikatorInput(finnArbeidsforholdVariabler, valideringsfeil);
             validerFilterInput(finnArbeidsforholdVariabler, valideringsfeil);
+            validerAnsettelsesdatoInput(finnArbeidsforholdVariabler, valideringsfeil);
         }
 
         if (!valideringsfeil.isEmpty()) {
@@ -71,6 +77,27 @@ public class ValidationService {
         }
         if (CollectionUtils.isEmpty(finnArbeidsforholdVariabler.getArbeidsforholdstatus())) {
             valideringsfeil.add(MANGLENDE_VARIABEL_ARBEIDSFORHOLDSTATUS);
+        }
+    }
+
+    private void validerAnsettelsesdatoInput(FinnArbeidsforholdVariabler finnArbeidsforholdVariabler, List<AaregDistFeilkode> valideringsfeil) {
+        var ansattFra = parseDato(finnArbeidsforholdVariabler.getAnsattFra(), UGYLDIG_VARIABEL_ANSATT_FRA, valideringsfeil);
+        var ansattTil = parseDato(finnArbeidsforholdVariabler.getAnsattTil(), UGYLDIG_VARIABEL_ANSATT_TIL, valideringsfeil);
+
+        if (ansattFra != null && ansattTil != null && ansattFra.isAfter(ansattTil)) {
+            valideringsfeil.add(UGYLDIG_VARIABEL_ANSATT_DATO_INTERVALL);
+        }
+    }
+
+    private LocalDate parseDato(String dato, AaregDistFeilkode feilkode, List<AaregDistFeilkode> valideringsfeil) {
+        if (dato == null) {
+            return null;
+        }
+        try {
+            return LocalDate.parse(dato);
+        } catch (DateTimeParseException e) {
+            valideringsfeil.add(feilkode);
+            return null;
         }
     }
 }

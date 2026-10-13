@@ -21,6 +21,8 @@ public class FinnArbeidsforholdVariabler {
     public static final String FIELD_RAPPORTERINGSORDNING = "rapporteringsordning";
     public static final String FIELD_ARBEIDSFORHOLDSTATUS = "arbeidsforholdstatus";
     public static final String FIELD_ANSETTELSESDETALJERHISTORIKK = "ansettelsesdetaljerhistorikk";
+    public static final String FIELD_ANSATT_FRA = "ansattFra";
+    public static final String FIELD_ANSATT_TIL = "ansattTil";
 
     private String opplysningspliktigId;
     private String arbeidsstedId;
@@ -31,6 +33,8 @@ public class FinnArbeidsforholdVariabler {
     private Set<Arbeidsforholdstatus> arbeidsforholdstatus;
 
     private Boolean ansettelsesdetaljerhistorikk;
+    private String ansattFra;
+    private String ansattTil;
 
     public enum Arbeidsforholdstatus {
         AKTIV,

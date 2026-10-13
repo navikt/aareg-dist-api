@@ -22,6 +22,8 @@ import java.util.stream.Collectors;
 
 import static graphql.execution.DataFetcherResult.newResult;
 import static no.nav.aareg.dist.api.domain.FinnArbeidsforholdVariabler.FIELD_ANSETTELSESDETALJERHISTORIKK;
+import static no.nav.aareg.dist.api.domain.FinnArbeidsforholdVariabler.FIELD_ANSATT_FRA;
+import static no.nav.aareg.dist.api.domain.FinnArbeidsforholdVariabler.FIELD_ANSATT_TIL;
 import static no.nav.aareg.dist.api.domain.FinnArbeidsforholdVariabler.FIELD_ARBEIDSFORHOLDSTATUS;
 import static no.nav.aareg.dist.api.domain.FinnArbeidsforholdVariabler.FIELD_ARBEIDSFORHOLDTYPE;
 import static no.nav.aareg.dist.api.domain.FinnArbeidsforholdVariabler.FIELD_ARBEIDSSTED_ID;
@@ -96,6 +98,8 @@ public class ArbeidsforholdDataFetcher implements DataFetcher<Object> {
                 .rapporteringsordning(rapporteringsordninger != null ? rapporteringsordninger.stream().map(FinnArbeidsforholdVariabler.Rapporteringsordning::valueOf).collect(Collectors.toSet()) : Collections.emptySet())
                 .arbeidsforholdstatus(arbeidsforholdStatuser != null ? arbeidsforholdStatuser.stream().map(FinnArbeidsforholdVariabler.Arbeidsforholdstatus::valueOf).collect(Collectors.toSet()) : Collections.emptySet())
                 .ansettelsesdetaljerhistorikk((Boolean) finnArbeidsforholdVariabler.getOrDefault(FIELD_ANSETTELSESDETALJERHISTORIKK, Boolean.FALSE))
+                .ansattFra((String) finnArbeidsforholdVariabler.get(FIELD_ANSATT_FRA))
+                .ansattTil((String) finnArbeidsforholdVariabler.get(FIELD_ANSATT_TIL))
                 .build();
     }
 }

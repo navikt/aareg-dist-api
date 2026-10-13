@@ -98,6 +98,8 @@ public class ArbeidsforholdDataService {
                 .rapporteringsordninger(rapporteringsordninger)
                 .arbeidsforholdstatuser(arbeidsforholdstatuser)
                 .historikk(finnArbeidsforholdVariabler.getAnsettelsesdetaljerhistorikk())
+                .ansattFra(finnArbeidsforholdVariabler.getAnsattFra())
+                .ansattTil(finnArbeidsforholdVariabler.getAnsattTil())
                 .build();
     }
 
