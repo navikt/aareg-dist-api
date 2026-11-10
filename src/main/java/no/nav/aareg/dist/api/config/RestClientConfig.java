@@ -43,13 +43,13 @@ public class RestClientConfig {
         return RestClient.builder()
                 .requestFactory(clientHttpRequestFactory())
                 .defaultStatusHandler(HttpStatusCode::is4xxClientError, (clientRequest, clientResponse) -> {
-                    var melding = String.format("Tjeneste [%s] returnerte client error med status %s og melding %s", tjeneste, clientResponse.getStatusCode(), new String(clientResponse.getBody().readAllBytes()));
-                    log.error(TEAM_LOGS_MARKER, melding);
+                    var melding = String.format("Tjeneste [%s] returnerte client error med status %s", tjeneste, clientResponse.getStatusCode());
+                    log.error(TEAM_LOGS_MARKER, "{} og melding {}", melding, new String(clientResponse.getBody().readAllBytes()));
                     throw new UnrecoverableException(melding);
                 })
                 .defaultStatusHandler(HttpStatusCode::is5xxServerError, (clientRequest, clientResponse) -> {
-                    var melding = String.format("Tjeneste [%s] returnerte server error med status %s og melding %s", tjeneste, clientResponse.getStatusCode(), new String(clientResponse.getBody().readAllBytes()));
-                    log.warn(TEAM_LOGS_MARKER, melding);
+                    var melding = String.format("Tjeneste [%s] returnerte server error med status %s", tjeneste, clientResponse.getStatusCode());
+                    log.warn(TEAM_LOGS_MARKER, "{} og melding {}", melding, new String(clientResponse.getBody().readAllBytes()));
                     throw new RetryableException(melding);
                 });
     }

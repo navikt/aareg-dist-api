@@ -2,12 +2,12 @@ package no.nav.aareg.dist.api.config.security;
 
 import com.nimbusds.jwt.JWTParser;
 import jakarta.servlet.http.HttpServletRequest;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.aareg.dist.api.config.security.identityprovider.IdentityProvider;
 import no.nav.aareg.dist.api.config.security.identityprovider.IdentityProviderProperties;
 import no.nav.aareg.dist.api.config.security.identityprovider.IdentityProviderRegistry;
 import org.jspecify.annotations.NonNull;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -18,12 +18,14 @@ import org.springframework.security.oauth2.core.OAuth2TokenValidator;
 import org.springframework.security.oauth2.core.OAuth2TokenValidatorResult;
 import org.springframework.security.oauth2.jose.jws.SignatureAlgorithm;
 import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.oauth2.jwt.JwtAudienceValidator;
 import org.springframework.security.oauth2.jwt.JwtValidators;
 import org.springframework.security.oauth2.server.resource.InvalidBearerTokenException;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationProvider;
 import org.springframework.security.oauth2.server.resource.web.BearerTokenResolver;
 import org.springframework.security.oauth2.server.resource.web.DefaultBearerTokenResolver;
 import org.springframework.stereotype.Component;
+import org.springframework.util.Assert;
 
 import java.util.Arrays;
 import java.util.List;
@@ -35,7 +37,6 @@ import static org.springframework.security.oauth2.jwt.NimbusJwtDecoder.withJwkSe
 
 @Slf4j
 @Component
-@RequiredArgsConstructor
 @EnableConfigurationProperties(IdentityProviderProperties.class)
 public class AaregAuthenticationResolver implements AuthenticationManagerResolver<HttpServletRequest> {
 
@@ -48,8 +49,18 @@ public class AaregAuthenticationResolver implements AuthenticationManagerResolve
     private final JwtClaimIssuerConverter issuerConverter = new JwtClaimIssuerConverter();
 
     private final IdentityProviderRegistry identityProviderRegistry;
+    private final String azureAppClientId;
 
     private final ConcurrentHashMap<IdentityProvider, AuthenticationManager> authenticationManagers = new ConcurrentHashMap<>();
+
+    public AaregAuthenticationResolver(
+            IdentityProviderRegistry identityProviderRegistry,
+            @Value("${AZURE_APP_CLIENT_ID}") String azureAppClientId
+    ) {
+        Assert.hasText(azureAppClientId, "AZURE_APP_CLIENT_ID kan ikke være tomt");
+        this.identityProviderRegistry = identityProviderRegistry;
+        this.azureAppClientId = azureAppClientId;
+    }
 
     @Override
     public AuthenticationManager resolve(HttpServletRequest context) {
@@ -73,7 +84,10 @@ public class AaregAuthenticationResolver implements AuthenticationManagerResolve
         if (identityProviderRegistry.getIdpByName(maskinportenIssuer).equals(identityProvider)) {
             jwtDecoder.setJwtValidator(oAuth2TokenValidator(identityProvider.getIssuerUrl()));
         } else {
-            jwtDecoder.setJwtValidator(JwtValidators.createDefaultWithIssuer(identityProvider.getIssuerUrl()));
+            jwtDecoder.setJwtValidator(new DelegatingOAuth2TokenValidator<>(
+                    JwtValidators.createDefaultWithIssuer(identityProvider.getIssuerUrl()),
+                    new JwtAudienceValidator(azureAppClientId)
+            ));
         }
 
         return new JwtAuthenticationProvider(jwtDecoder);
