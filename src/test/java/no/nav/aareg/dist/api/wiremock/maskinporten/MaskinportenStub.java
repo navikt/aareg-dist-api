@@ -123,7 +123,7 @@ public class MaskinportenStub implements WireMockStub {
         return generateToken(claims);
     }
 
-    private String generateToken(Map<String, Object> claims) {
+    public String generateToken(Map<String, Object> claims) {
         try {
             JWTClaimsSet.Builder claimsSetBuilder = new JWTClaimsSet.Builder();
             claims.forEach(claimsSetBuilder::claim);
